@@ -65,10 +65,13 @@ if [[ "$os" == "darwin" ]]; then
   # Prefer staged sonames if present.
   if command -v install_name_tool >/dev/null; then
     for dep in libicui18n libicuuc libicudata; do
-      install_name_tool -change \
-        "$LIBDIR/${dep}.${MAJOR}.dylib" "@loader_path/${dep}.${MAJOR}.dylib" "$DEST_LIB" 2>/dev/null || true
-      install_name_tool -change \
-        "${dep}.${MAJOR}.dylib" "@loader_path/${dep}.${MAJOR}.dylib" "$DEST_LIB" 2>/dev/null || true
+      # Only rewrite to @loader_path when the soname is staged beside the shim.
+      if [[ -f "$OUT/${dep}.${MAJOR}.dylib" ]]; then
+        install_name_tool -change \
+          "$LIBDIR/${dep}.${MAJOR}.dylib" "@loader_path/${dep}.${MAJOR}.dylib" "$DEST_LIB" 2>/dev/null || true
+        install_name_tool -change \
+          "${dep}.${MAJOR}.dylib" "@loader_path/${dep}.${MAJOR}.dylib" "$DEST_LIB" 2>/dev/null || true
+      fi
     done
     otool -L "$DEST_LIB" | awk '/^\t/ {print $1}' | while read -r d; do
       case "$d" in

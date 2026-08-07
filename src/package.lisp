@@ -14,6 +14,7 @@
            #:u-strlen
            #:u-str-to-utf8
            #:u-str-from-utf8
+           #:u-chars-to-lisp
            #:u-has-binary-property
            #:u-get-int-property-value
            #:u-char-type

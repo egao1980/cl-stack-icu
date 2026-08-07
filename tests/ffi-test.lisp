@@ -63,7 +63,7 @@
              (let ((n (unum-format-double fmt 1234.5d0 buf 64 (null-pointer) err)))
                (ok (u-success-p (mem-ref err :int)))
                (ok (plusp n))
-               (let ((s (foreign-string-to-lisp buf :count n :encoding :utf-16)))
+               (let ((s (u-chars-to-lisp buf n)))
                  (ok (search "1" s)))))
         (unum-close fmt)))))
 
@@ -98,7 +98,7 @@
              (let ((n (uplrules-select pr 1d0 buf 32 err)))
                (ok (u-success-p (mem-ref err :int)))
                (ok (plusp n))
-               (ok (string= "one" (foreign-string-to-lisp buf :count n :encoding :utf-16)))))
+               (ok (string= "one" (u-chars-to-lisp buf n)))))
         (uplrules-close pr)))))
 
 (deftest mf2-hello

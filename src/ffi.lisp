@@ -193,6 +193,26 @@
   (src-length :int32)
   (p-error-code :pointer))
 
+(defun u-chars-to-lisp (pointer uchar-count)
+  "Convert ICU UChar* of UCHAR-COUNT code units to a Lisp string.
+ICU lengths are in UChars; CFFI :utf-16 :count is octets — do not pass
+UCHAR-COUNT directly to FOREIGN-STRING-TO-LISP."
+  (when (or (null pointer) (null-pointer-p pointer) (minusp uchar-count))
+    (return-from u-chars-to-lisp ""))
+  (when (zerop uchar-count)
+    (return-from u-chars-to-lisp ""))
+  (with-foreign-objects ((err :int)
+                         (needed :int32))
+    (setf (mem-ref err :int) (foreign-enum-value 'u-error-code :zero-error))
+    ;; Probe UTF-8 length.
+    (u-str-to-utf8 (null-pointer) 0 needed pointer uchar-count err)
+    (let ((cap (max 1 (+ (mem-ref needed :int32) 1))))
+      (setf (mem-ref err :int) (foreign-enum-value 'u-error-code :zero-error))
+      (with-foreign-pointer (utf8 cap)
+        (u-str-to-utf8 utf8 cap needed pointer uchar-count err)
+        (check-icu (mem-ref err :int) "u-str-to-utf8")
+        (foreign-string-to-lisp utf8 :count (mem-ref needed :int32))))))
+
 ;;; --- uchar --------------------------------------------------------------------
 
 (defcfun-icu ("u_hasBinaryProperty" u-has-binary-property) u-bool

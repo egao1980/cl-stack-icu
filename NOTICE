@@ -1,0 +1,8 @@
+cl-stack-icu bundles ICU4C (International Components for Unicode).
+
+ICU License — UNICODE LICENSE V3
+https://www.unicode.org/copyright.html
+https://github.com/unicode-org/icu/blob/main/icu4c/LICENSE
+
+Copyright © 2016 and later Unicode, Inc. and others.
+SPDX-License-Identifier: Unicode-3.0

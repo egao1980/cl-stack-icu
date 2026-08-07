@@ -1,0 +1,12 @@
+build/
+lib/
+grovel/
+grovel-cache/
+.grovel-cache.staging-hidden/
+native-bundle/
+.cl-repository/
+*.fasl
+.qlot/
+*~
+.DS_Store
+qlfile.lock

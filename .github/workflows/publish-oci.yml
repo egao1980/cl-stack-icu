@@ -1,0 +1,217 @@
+name: Publish OCI Package
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Package / ICU version (default: from tag or 78.1)"
+        required: false
+        default: ""
+      registry:
+        description: "OCI registry"
+        required: false
+        default: "ghcr.io"
+
+env:
+  ICU_VERSION_DEFAULT: "78.1"
+  PACKAGE_VERSION_DEFAULT: "78.1"
+  SBCL_VERSION: 2.6.7
+  ROSWELL_VERSION: "26.02.116"
+  CL_REPOSITORY_CLIENT_IMAGE: "ghcr.io/egao1980/cl-repository/cl-repository-client"
+  CL_REPOSITORY_CLIENT_VERSION: "latest"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: linux
+            arch: amd64
+            runner: ubuntu-latest
+          - os: linux
+            arch: arm64
+            runner: ubuntu-24.04-arm
+          - os: darwin
+            arch: arm64
+            runner: macos-latest
+          - os: windows
+            arch: amd64
+            runner: windows-latest
+
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: oras-project/setup-oras@v2
+        with:
+          version: 1.2.3
+
+      - name: Pull cl-repository-client (OCI)
+        shell: bash
+        run: |
+          echo "${GITHUB_TOKEN}" | oras login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
+          rm -rf /tmp/cl-repo-pull .cl-repository
+          mkdir -p /tmp/cl-repo-pull .cl-repository
+          CLIENT_VER="${CL_REPOSITORY_CLIENT_VERSION}"
+          if [ -z "${CLIENT_VER}" ] || [ "${CLIENT_VER}" = "latest" ]; then
+            CLIENT_VER=$(oras manifest fetch "${CL_REPOSITORY_CLIENT_IMAGE}:latest" \
+              | python3 -c 'import sys,json; print(json.load(sys.stdin)["annotations"]["org.opencontainers.image.version"])')
+            : "${CLIENT_VER:?failed to resolve cl-repository-client from :latest anchor}"
+            echo "Resolved cl-repository-client → ${CLIENT_VER}"
+          fi
+          oras pull "${CL_REPOSITORY_CLIENT_IMAGE}:${CLIENT_VER}" -o /tmp/cl-repo-pull
+          for f in /tmp/cl-repo-pull/*.tar.gz; do
+            tar -xzf "$f" -C .cl-repository
+          done
+          CLIENT_DIR="$(find .cl-repository -maxdepth 1 -type d -name 'cl-oci-*' | head -1)"
+          : "${CLIENT_DIR:?cl-oci-* not found after oras pull}"
+          echo "CL_REPOSITORY_CLIENT_DIR=${CLIENT_DIR}" >> "$GITHUB_ENV"
+
+      - name: Resolve ICU version
+        id: ver
+        shell: bash
+        run: |
+          V="${{ inputs.version }}"
+          if [ -z "$V" ] && [[ "${GITHUB_REF_NAME}" == v* ]]; then
+            V="${GITHUB_REF_NAME#v}"
+          fi
+          [ -z "$V" ] && V="${ICU_VERSION_DEFAULT}"
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          echo "ICU_VERSION=$V" >> "$GITHUB_ENV"
+
+      - name: Install build deps (Linux)
+        if: matrix.os == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config curl patchelf
+
+      - name: Install build deps (macOS)
+        if: matrix.os == 'darwin'
+        run: brew install make || true
+
+      - name: Install Roswell (Unix)
+        if: matrix.os != 'windows'
+        shell: bash
+        run: |
+          curl -sL https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | bash
+          echo "$HOME/.roswell/bin" >> "$GITHUB_PATH"
+
+      - name: Install Roswell (Windows)
+        if: matrix.os == 'windows'
+        shell: bash
+        run: |
+          curl -sL "https://github.com/roswell/roswell/releases/download/v${ROSWELL_VERSION}/roswell_${ROSWELL_VERSION}_amd64.zip" \
+            -o /tmp/roswell.zip
+          rm -rf /c/roswell
+          mkdir -p /c/roswell
+          unzip -qo /tmp/roswell.zip -d /c/roswell
+          echo "/c/roswell/roswell" >> "$GITHUB_PATH"
+          echo "$HOME/.roswell/bin" >> "$GITHUB_PATH"
+          /c/roswell/roswell/ros.exe version
+
+      - name: Install SBCL
+        shell: bash
+        run: |
+          ros install "sbcl-bin/$SBCL_VERSION"
+          ros use "sbcl-bin/$SBCL_VERSION"
+
+      - name: Bootstrap cl-repository-client (QL deps for client only)
+        shell: bash
+        run: |
+          ros -e '(ql:quickload (quote ("yason" "ironclad" "babel" "dexador" "quri" "chipz" "flexi-streams" "cl-ppcre" "cl-base64" "trivial-features" "salza2" "archive")) :silent t)' -q
+
+      - name: Pull Lisp deps with cl-repository
+        shell: bash
+        run: |
+          export CL_SOURCE_REGISTRY="$(pwd)//:$(pwd)/${CL_REPOSITORY_CLIENT_DIR}//:"
+          CI_INSTALL_DEPS_ONLY=1 ros -l scripts/ci-test.lisp -q
+          echo "CL_SOURCE_REGISTRY=$(pwd)//:$(pwd)/${CL_REPOSITORY_CLIENT_DIR}//:$HOME/.local/share/cl-repository/systems//:" >> "$GITHUB_ENV"
+
+      - name: Build ICU (Unix)
+        if: matrix.os != 'windows'
+        run: |
+          chmod +x scripts/build-icu.sh scripts/stage-grovel.sh
+          ./scripts/build-icu.sh
+          export CL_STACK_ICU_INCLUDE="$(cat build/cl-stack-icu-include)"
+          ./scripts/stage-grovel.sh cl-stack-icu
+          mkdir -p native-bundle/lib native-bundle/grovel
+          cp -a "lib/${{ matrix.os }}-${{ matrix.arch }}/." native-bundle/lib/
+          cp -a "grovel/${{ matrix.os }}-${{ matrix.arch }}/." native-bundle/grovel/
+
+      - name: Build ICU (Windows / MSVC)
+        if: matrix.os == 'windows'
+        shell: pwsh
+        run: |
+          .\scripts\build-icu.ps1
+          "CL_STACK_ICU_INCLUDE=$env:CL_STACK_ICU_INCLUDE" |
+            Out-File -FilePath $env:GITHUB_ENV -Append
+          $lib = Resolve-Path "lib\windows-amd64"
+          "CL_STACK_ICU_NATIVE=$lib" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "Path=$lib;$env:Path" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Install MinGW for grovel only (Windows)
+        if: matrix.os == 'windows'
+        shell: pwsh
+        run: |
+          choco install mingw -y
+          $mingw = @(
+            "C:\ProgramData\mingw64\mingw64\bin",
+            "C:\mingw64\bin"
+          ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $mingw) { throw "mingw bin dir not found after choco install" }
+          "Path=$mingw;$env:Path" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Stage grovel (Windows)
+        if: matrix.os == 'windows'
+        shell: bash
+        run: |
+          chmod +x scripts/stage-grovel.sh
+          ./scripts/stage-grovel.sh cl-stack-icu
+          mkdir -p native-bundle/lib native-bundle/grovel
+          cp -a "lib/${{ matrix.os }}-${{ matrix.arch }}/." native-bundle/lib/
+          cp -a "grovel/${{ matrix.os }}-${{ matrix.arch }}/." native-bundle/grovel/
+
+      - name: Upload native+grovel artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: native-${{ matrix.os }}-${{ matrix.arch }}
+          path: native-bundle/
+
+  resolve-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
+    steps:
+      - id: ver
+        shell: bash
+        run: |
+          V="${{ inputs.version }}"
+          if [ -z "$V" ] && [[ "${GITHUB_REF_NAME}" == v* ]]; then
+            V="${GITHUB_REF_NAME#v}"
+          fi
+          [ -z "$V" ] && V="${PACKAGE_VERSION_DEFAULT}"
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+
+  publish:
+    needs: [build, resolve-version]
+    permissions:
+      contents: read
+      packages: write
+    uses: egao1980/cl-repository/.github/workflows/publish-native-package.yml@main
+    with:
+      package-name: cl-stack-icu
+      version: ${{ needs.resolve-version.outputs.version }}
+      registry: ${{ inputs.registry || 'ghcr.io' }}
+      packager-tag: "0.12.0"
+      source-paths: |
+        cl-stack-icu.asd
+        src
+        native
+        LICENSE
+        README.md
+        NOTICE
+    secrets: inherit

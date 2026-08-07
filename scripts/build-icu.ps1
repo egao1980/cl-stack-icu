@@ -130,3 +130,11 @@ foreach ($name in $needed) {
 Write-Host "==> staged:"
 Get-ChildItem $Out | Format-Table Name, Length
 Write-Host "OK: icu $Version -> windows/amd64"
+
+# MF2 C++ shim
+$env:CL_STACK_ICU_INCLUDE = $Include
+$env:DEST_DIR = $Out
+$env:ICU_VERSION = $Version
+$env:ICU_MAJOR = $Major
+& (Join-Path $Root "scripts\build-mf2-shim.ps1")
+if ($LASTEXITCODE -ne 0) { throw "build-mf2-shim.ps1 failed" }

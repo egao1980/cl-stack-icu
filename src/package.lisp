@@ -7,7 +7,7 @@
            #:check-icu
            #:u-success-p
            #:u-failure-p
-           ;; grovelled / wrapped entry points used by backends
+           ;; unicode
            #:u-get-version
            #:u-version-to-string
            #:u-error-name
@@ -35,6 +35,71 @@
            #:uidna-close
            #:uidna-name-to-ascii
            #:uidna-name-to-unicode
+           ;; locale / resources / case
+           #:uloc-get-default
+           #:uloc-set-default
+           #:uloc-get-language
+           #:uloc-get-script
+           #:uloc-get-country
+           #:uloc-get-name
+           #:uloc-canonicalize
+           #:uloc-for-language-tag
+           #:uloc-to-language-tag
+           #:uloc-count-available
+           #:uloc-get-available
+           #:ures-open
+           #:ures-close
+           #:ures-get-by-key
+           #:ures-get-by-index
+           #:ures-get-string
+           #:ures-get-type
+           #:ures-get-key
+           #:ures-get-size
+           #:u-str-to-lower
+           #:u-str-to-upper
+           #:u-str-to-title
+           ;; collation
+           #:ucol-open
+           #:ucol-close
+           #:ucol-strcoll-utf8
+           #:ucol-get-sort-key
+           #:ucol-set-strength
+           #:ucol-get-strength
+           ;; number / date
+           #:unum-open
+           #:unum-close
+           #:unum-format-double
+           #:unum-format-double-currency
+           #:unum-parse-double
+           #:unumf-open-for-skeleton-and-locale
+           #:unumf-close
+           #:unumf-open-result
+           #:unumf-close-result
+           #:unumf-format-double
+           #:unumf-format-int
+           #:unumf-result-as-value
+           #:ufmtval-get-string
+           #:udat-open
+           #:udat-close
+           #:udat-format
+           #:udat-parse
+           ;; plurals / lists
+           #:uplrules-open-for-type
+           #:uplrules-close
+           #:uplrules-select
+           #:ulistfmt-open-for-type
+           #:ulistfmt-close
+           #:ulistfmt-format
+           ;; MF2 shim
+           #:mf2-open
+           #:mf2-close
+           #:mf2-args-open
+           #:mf2-args-close
+           #:mf2-args-set-string
+           #:mf2-args-set-double
+           #:mf2-args-set-int64
+           #:mf2-format
+           #:mf2-format-message
            #:+icu-soname-major+
            #:+u-fold-case-default+
            #:+u-fold-case-exclude-special-i+
@@ -45,7 +110,6 @@
            #:+uidna-check-contexto+
            #:+uidna-nontransitional-to-ascii+
            #:+uidna-nontransitional-to-unicode+
-           ;; internal (tests); libs load automatically on ASDF load
            #:*icu-loaded*))
 (in-package #:cl-stack-icu)
 

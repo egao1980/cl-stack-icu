@@ -210,6 +210,7 @@ jobs:
       source-paths: |
         cl-stack-icu.asd
         src
+        native
         LICENSE
         README.md
         NOTICE

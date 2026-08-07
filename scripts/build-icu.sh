@@ -164,3 +164,11 @@ fi
 echo "==> staged:"
 ls -la "$OUT"
 echo "OK: icu ${ICU_VERSION} -> ${os}/${arch}"
+
+# MF2 C++ shim (links against staged ICU libs).
+export CL_STACK_ICU_PREFIX="$PREFIX"
+export CL_STACK_ICU_INCLUDE
+export DEST_DIR="$OUT"
+export ICU_MAJOR="$MAJOR"
+chmod +x "$ROOT/scripts/build-mf2-shim.sh"
+"$ROOT/scripts/build-mf2-shim.sh"

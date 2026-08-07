@@ -65,6 +65,10 @@
 
 (defvar *icu-loaded* nil)
 
+;;; Defined for real in ffi-mf2.lisp (loaded later in the serial system).
+(defun %load-mf2 ()
+  (error "cl-stack-icu: %load-mf2 called before ffi-mf2.lisp loaded"))
+
 (defun %host-os ()
   #+windows "windows"
   #+darwin "darwin"
@@ -132,7 +136,7 @@
       t)))
 
 (defun load-icu ()
-  "Load ICU shared libs (data → uc → i18n). Idempotent; also run at ASDF load."
+  "Load ICU shared libs (data → uc → i18n → mf2 shim). Idempotent; also run at ASDF load."
   (unless *icu-loaded*
     (let ((preloaded nil))
       (dolist (dir (%native-search-dirs))
@@ -144,6 +148,7 @@
         (load-foreign-library 'libicudata)
         (load-foreign-library 'libicuuc)
         (load-foreign-library 'libicui18n)))
+    (%load-mf2)
     (setf *icu-loaded* t))
   t)
 
@@ -299,5 +304,5 @@
   (p-error-code :pointer))
 
 ;;; Auto-load on ASDF load — consumers must not call LOAD-ICU (policy: no extra load-*).
-(eval-when (:load-toplevel :execute)
-  (load-icu))
+;;; Note: LOAD-ICU is defined above; %LOAD-MF2 lives in ffi-mf2.lisp which loads after.
+;;; The actual auto-load call is at the end of ffi-mf2.lisp.

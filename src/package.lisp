@@ -110,7 +110,27 @@
            #:+uidna-check-contexto+
            #:+uidna-nontransitional-to-ascii+
            #:+uidna-nontransitional-to-unicode+
-           #:*icu-loaded*))
+           #:*icu-loaded*
+           ;; grovelled ctypes / constants / cenums (package-qualified for foreign-enum-value)
+           #:u-char #:u-char32 #:u-bool
+           #:u-icu-version-major-num
+           #:u-icu-version-minor-num
+           #:u-icu-version-patchlevel-num
+           #:u-fold-case-default
+           #:u-fold-case-exclude-special-i
+           #:uidna-option
+           #:u-error-code
+           #:u-char-category
+           #:u-property
+           #:u-break-iterator-type
+           #:u-col-attribute-value
+           #:u-collation-result
+           #:u-number-format-style
+           #:u-date-format-style
+           #:u-plural-type
+           #:u-list-formatter-type
+           #:u-list-formatter-width
+           #:u-res-type))
 (in-package #:cl-stack-icu)
 
 ;;; Must match ICU major in package :version / sonames (icudt78.dll, libicuuc.so.78, …).

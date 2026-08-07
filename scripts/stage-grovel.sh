@@ -72,18 +72,14 @@ cat >"$STAGE_LISP" <<EOF
         (format *error-output* "~&UNHANDLED: ~A~%" c)
         (uiop:quit 1)))
 (setf asdf:*compile-file-failure-behaviour* :warn)
+(asdf:load-system "cl-repository-client")
+(cl-repo:add-registry "https://ghcr.io" :namespace "egao1980/cl-systems"
+                      :priority :prepend)
 (handler-case
-    (progn
-      (asdf:load-system "cl-repository-client")
-      (cl-repo:add-registry "https://ghcr.io" :namespace "egao1980/cl-systems"
-                            :priority :prepend)
-      (handler-case
-          (cl-repo:load-system "cffi"
-                               :sources '(("babel" :ql)
-                                          ("trivial-features" :ql)
-                                          ("cl-unicode" :ql)))
-        (error ()
-          (ql:quickload "cffi" :silent t))))
+    (cl-repo:load-system "cffi"
+                         :sources '(("babel" :ql)
+                                    ("trivial-features" :ql)
+                                    ("cl-unicode" :ql)))
   (error ()
     (ql:quickload "cffi" :silent t)))
 (unless (asdf:find-system "cffi-grovel" nil)

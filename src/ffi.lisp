@@ -219,13 +219,15 @@
 ;;; Portable aliases for grovelled fold/IDNA option constants.
 (defparameter +u-fold-case-default+ u-fold-case-default)
 (defparameter +u-fold-case-exclude-special-i+ u-fold-case-exclude-special-i)
-(defparameter +uidna-default+ uidna-default)
-(defparameter +uidna-use-std3-rules+ uidna-use-std3-rules)
-(defparameter +uidna-check-bidi+ uidna-check-bidi)
-(defparameter +uidna-check-contextj+ uidna-check-contextj)
-(defparameter +uidna-check-contexto+ uidna-check-contexto)
-(defparameter +uidna-nontransitional-to-ascii+ uidna-nontransitional-to-ascii)
-(defparameter +uidna-nontransitional-to-unicode+ uidna-nontransitional-to-unicode)
+(defparameter +uidna-default+ (foreign-enum-value 'uidna-option :default))
+(defparameter +uidna-use-std3-rules+ (foreign-enum-value 'uidna-option :use-std3-rules))
+(defparameter +uidna-check-bidi+ (foreign-enum-value 'uidna-option :check-bidi))
+(defparameter +uidna-check-contextj+ (foreign-enum-value 'uidna-option :check-contextj))
+(defparameter +uidna-check-contexto+ (foreign-enum-value 'uidna-option :check-contexto))
+(defparameter +uidna-nontransitional-to-ascii+
+  (foreign-enum-value 'uidna-option :nontransitional-to-ascii))
+(defparameter +uidna-nontransitional-to-unicode+
+  (foreign-enum-value 'uidna-option :nontransitional-to-unicode))
 
 ;;; --- Normalizer2 --------------------------------------------------------------
 

@@ -56,13 +56,15 @@
 (constant (u-fold-case-default "U_FOLD_CASE_DEFAULT"))
 (constant (u-fold-case-exclude-special-i "U_FOLD_CASE_EXCLUDE_SPECIAL_I"))
 
-(constant (uidna-default "UIDNA_DEFAULT"))
-(constant (uidna-use-std3-rules "UIDNA_USE_STD3_RULES"))
-(constant (uidna-check-bidi "UIDNA_CHECK_BIDI"))
-(constant (uidna-check-contextj "UIDNA_CHECK_CONTEXTJ"))
-(constant (uidna-check-contexto "UIDNA_CHECK_CONTEXTO"))
-(constant (uidna-nontransitional-to-ascii "UIDNA_NONTRANSITIONAL_TO_ASCII"))
-(constant (uidna-nontransitional-to-unicode "UIDNA_NONTRANSITIONAL_TO_UNICODE"))
+;;; UIDNA_* live in an anonymous enum (not #define) — use cenum, not constant.
+(cenum (uidna-option)
+  ((:default "UIDNA_DEFAULT"))
+  ((:use-std3-rules "UIDNA_USE_STD3_RULES"))
+  ((:check-bidi "UIDNA_CHECK_BIDI"))
+  ((:check-contextj "UIDNA_CHECK_CONTEXTJ"))
+  ((:check-contexto "UIDNA_CHECK_CONTEXTO"))
+  ((:nontransitional-to-ascii "UIDNA_NONTRANSITIONAL_TO_ASCII"))
+  ((:nontransitional-to-unicode "UIDNA_NONTRANSITIONAL_TO_UNICODE")))
 
 (cenum (u-error-code)
   ((:using-fallback-warning "U_USING_FALLBACK_WARNING"))

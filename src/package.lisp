@@ -108,6 +108,7 @@
            #:ures-get-type
            #:ures-get-key
            #:ures-get-size
+           #:ures-get-locale-by-type
            #:u-str-to-lower
            #:u-str-to-upper
            #:u-str-to-title

@@ -6,7 +6,7 @@
     nil)
 
 (defsystem "cl-stack-icu"
-  :version "78.1.1"
+  :version "78.1.2"
   :description "ICU4C native overlays + CFFI (+ MF2 C++ shim) for cl-stack unicode/i18n/l10n"
   :author "egao1980"
   :license "MIT"

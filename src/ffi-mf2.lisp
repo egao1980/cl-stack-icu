@@ -82,7 +82,8 @@
 (defun mf2-format-message (pattern args &key (locale "en") (max-bytes 4096))
   "Format MF2 PATTERN (UTF-8 string) with ARGS alist ((name . value)…).
 VALUE is string, double-float, or integer. Returns UTF-8 Lisp string."
-  (%load-mf2)
+  ;; Late-bind: same ECL inlining concern as LOAD-ICU if a stub ever exists again.
+  (funcall (symbol-function '%load-mf2))
   (with-foreign-object (err :int)
     (setf (mem-ref err :int) (foreign-enum-value 'u-error-code :zero-error))
     (with-foreign-string (pat pattern)

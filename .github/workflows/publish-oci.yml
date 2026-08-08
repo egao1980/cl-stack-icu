@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Package / ICU version (default: from tag or 78.1)"
+        description: "Package OCI version (default: from tag or 78.1.1); ICU sources stay ICU_VERSION_DEFAULT"
         required: false
         default: ""
       registry:
@@ -75,13 +75,12 @@ jobs:
         id: ver
         shell: bash
         run: |
-          V="${{ inputs.version }}"
-          if [ -z "$V" ] && [[ "${GITHUB_REF_NAME}" == v* ]]; then
-            V="${GITHUB_REF_NAME#v}"
-          fi
-          [ -z "$V" ] && V="${ICU_VERSION_DEFAULT}"
-          echo "version=$V" >> "$GITHUB_OUTPUT"
-          echo "ICU_VERSION=$V" >> "$GITHUB_ENV"
+          # ICU upstream release (download tarball) ≠ package semver (tag / OCI).
+          # Tag v78.1.1 → package 78.1.1, still build ICU 78.1 sources.
+          ICU="${ICU_VERSION_DEFAULT}"
+          echo "version=$ICU" >> "$GITHUB_OUTPUT"
+          echo "ICU_VERSION=$ICU" >> "$GITHUB_ENV"
+          echo "Resolved ICU_VERSION=$ICU (package tag may differ)"
 
       - name: Install build deps (Linux)
         if: matrix.os == 'linux'

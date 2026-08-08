@@ -105,3 +105,87 @@
   (let ((out (mf2-format-message "Hello {$name}!" '(("name" . "Ada")) :locale "en")))
     (ok (search "Ada" out))
     (ok (search "Hello" out))))
+
+(deftest char-name-latin-capital-a
+  (with-foreign-object (err :int)
+    (setf (mem-ref err :int) (foreign-enum-value 'u-error-code :zero-error))
+    (with-foreign-pointer (buf 128)
+      (let ((n (u-char-name #x0041
+                            (foreign-enum-value 'u-char-name-choice :unicode)
+                            buf 128 err)))
+        (ok (u-success-p (mem-ref err :int)))
+        (ok (plusp n))
+        (ok (search "LATIN CAPITAL LETTER A"
+                    (foreign-string-to-lisp buf :count n)))))))
+
+(deftest uset-letter-pattern
+  (with-foreign-object (err :int)
+    (setf (mem-ref err :int) (foreign-enum-value 'u-error-code :zero-error))
+    (with-foreign-string (pat "[:Letter:]" :encoding :utf-16)
+      ;; pattern as UTF-16 UChars — convert via u_strFromUTF8 instead
+      ))
+  (with-foreign-object (err :int)
+    (setf (mem-ref err :int) (foreign-enum-value 'u-error-code :zero-error))
+    (with-foreign-string (utf8 "[:Letter:]" :encoding :utf-8)
+      (with-foreign-objects ((needed :int32))
+        (u-str-from-utf8 (null-pointer) 0 needed utf8 -1 err)
+        (let ((n (mem-ref needed :int32)))
+          (setf (mem-ref err :int) (foreign-enum-value 'u-error-code :zero-error))
+          (with-foreign-pointer (uchars (* (foreign-type-size 'u-char) (1+ n)))
+            (u-str-from-utf8 uchars (1+ n) needed utf8 -1 err)
+            (setf (mem-ref err :int) (foreign-enum-value 'u-error-code :zero-error))
+            (let ((set (uset-open-pattern uchars (mem-ref needed :int32) err)))
+              (ok (u-success-p (mem-ref err :int)))
+              (ok (plusp (uset-contains set #x0041)))
+              (ok (zerop (uset-contains set #x0030)))
+              (uset-close set))))))))
+
+(deftest break-grapheme-smoke
+  (with-foreign-object (err :int)
+    (setf (mem-ref err :int) (foreign-enum-value 'u-error-code :zero-error))
+    (let ((bi (ubrk-open (foreign-enum-value 'u-break-iterator-type :character)
+                         "en" (null-pointer) 0 err)))
+      (ok (u-success-p (mem-ref err :int)))
+      (unwind-protect
+           (with-foreign-string (utf8 "ab" :encoding :utf-8)
+             (with-foreign-objects ((needed :int32))
+               (setf (mem-ref err :int) (foreign-enum-value 'u-error-code :zero-error))
+               (u-str-from-utf8 (null-pointer) 0 needed utf8 -1 err)
+               (let ((n (mem-ref needed :int32)))
+                 (setf (mem-ref err :int) (foreign-enum-value 'u-error-code :zero-error))
+                 (with-foreign-pointer (uchars (* (foreign-type-size 'u-char) (1+ n)))
+                   (u-str-from-utf8 uchars (1+ n) needed utf8 -1 err)
+                   (ubrk-set-text bi uchars (mem-ref needed :int32) err)
+                   (ok (u-success-p (mem-ref err :int)))
+                   (ok (= (ubrk-first bi) 0))
+                   (ok (plusp (ubrk-next bi)))
+                   (ok (plusp (ubrk-is-boundary bi 1)))))))
+        (ubrk-close bi)))))
+
+(deftest relative-date-numeric
+  (with-foreign-object (err :int)
+    (setf (mem-ref err :int) (foreign-enum-value 'u-error-code :zero-error))
+    (let ((fmt (ureldatefmt-open "en" (null-pointer)
+                                 (foreign-enum-value 'u-date-relative-date-time-formatter-style :long)
+                                 +udispctx-capitalization-none+
+                                 err)))
+      (ok (u-success-p (mem-ref err :int)))
+      (unwind-protect
+           (progn
+             (setf (mem-ref err :int) (foreign-enum-value 'u-error-code :zero-error))
+             (let ((n (ureldatefmt-format-numeric
+                       fmt -1d0
+                       (foreign-enum-value 'u-relative-date-time-unit :day)
+                       (null-pointer) 0 err)))
+               (setf (mem-ref err :int) (foreign-enum-value 'u-error-code :zero-error))
+               (with-foreign-pointer (buf (* (foreign-type-size 'u-char) (1+ (max n 0))))
+                 (setf n (ureldatefmt-format-numeric
+                          fmt -1d0
+                          (foreign-enum-value 'u-relative-date-time-unit :day)
+                          buf (1+ n) err))
+                 (ok (u-success-p (mem-ref err :int)))
+                 (let ((s (u-chars-to-lisp buf n)))
+                   (ok (or (search "day" s :test #'char-equal)
+                           (search "yesterday" s :test #'char-equal)
+                           (plusp (length s))))))))
+        (ureldatefmt-close fmt)))))

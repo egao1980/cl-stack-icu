@@ -31,7 +31,59 @@
            #:ubrk-close
            #:ubrk-first
            #:ubrk-next
+           #:ubrk-last
+           #:ubrk-previous
+           #:ubrk-current
+           #:ubrk-following
+           #:ubrk-preceding
+           #:ubrk-is-boundary
            #:ubrk-set-text
+           #:u-char-name
+           #:u-char-from-name
+           #:u-get-numeric-value
+           #:u-digit
+           #:u-char-mirror
+           #:u-char-age
+           #:u-get-property-value-name
+           #:u-str-fold-case
+           #:unorm2-is-normalized
+           #:unorm2-quick-check
+           #:unorm2-has-boundary-before
+           #:unorm2-has-boundary-after
+           #:unorm2-get-decomposition
+           #:uset-open-empty
+           #:uset-open
+           #:uset-open-pattern
+           #:uset-close
+           #:uset-freeze
+           #:uset-is-frozen
+           #:uset-add
+           #:uset-remove
+           #:uset-add-string
+           #:uset-remove-string
+           #:uset-retain-all
+           #:uset-complement
+           #:uset-clear
+           #:uset-contains
+           #:uset-contains-string
+           #:uset-size
+           #:uset-is-empty
+           #:uset-span
+           #:uset-span-back
+           #:uset-span-utf8
+           #:uset-span-back-utf8
+           #:ureldatefmt-open
+           #:ureldatefmt-close
+           #:ureldatefmt-format-numeric
+           #:ureldatefmt-format
+           #:+u-no-numeric-value+
+           #:+udispctx-capitalization-none+
+           #:u-char-name-choice
+           #:u-property-name-choice
+           #:u-set-span-condition
+           #:u-relative-date-time-unit
+           #:u-date-relative-date-time-formatter-style
+           #:u-no-numeric-value
            #:uidna-open-uts46
            #:uidna-close
            #:uidna-name-to-ascii

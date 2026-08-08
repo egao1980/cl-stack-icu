@@ -6,7 +6,7 @@
     nil)
 
 (defsystem "cl-stack-icu"
-  :version "78.1"
+  :version "78.1.1"
   :description "ICU4C native overlays + CFFI (+ MF2 C++ shim) for cl-stack unicode/i18n/l10n"
   :author "egao1980"
   :license "MIT"
@@ -24,11 +24,13 @@
             (:file "grovel-cached" :pathname "../grovel-cache/grovel.cffi")
             (:file "ffi")
             (:file "ffi-i18n")
+            (:file "ffi-extra")
             (:file "ffi-mf2"))
           '((:file "package")
             (cffi-grovel:grovel-file "grovel")
             (:file "ffi")
             (:file "ffi-i18n")
+            (:file "ffi-extra")
             (:file "ffi-mf2"))))
   :in-order-to ((test-op (test-op "cl-stack-icu/tests")))
   :properties

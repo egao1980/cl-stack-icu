@@ -42,6 +42,9 @@
 (include "unicode/unumberformatter.h")
 (include "unicode/uformattedvalue.h")
 (include "unicode/uformattednumber.h")
+(include "unicode/uset.h")
+(include "unicode/ureldatefmt.h")
+(include "unicode/udisplaycontext.h")
 
 (ctype u-char "UChar")
 (ctype u-char32 "UChar32")
@@ -282,3 +285,42 @@
   ((:int "URES_INT"))
   ((:array "URES_ARRAY"))
   ((:int-vector "URES_INT_VECTOR")))
+
+(cenum (u-char-name-choice)
+  ((:unicode "U_UNICODE_CHAR_NAME"))
+  ((:extended "U_EXTENDED_CHAR_NAME"))
+  ((:alias "U_CHAR_NAME_ALIAS")))
+
+(cenum (u-property-name-choice)
+  ((:short "U_SHORT_PROPERTY_NAME"))
+  ((:long "U_LONG_PROPERTY_NAME")))
+
+(cenum (u-set-span-condition)
+  ((:not-contained "USET_SPAN_NOT_CONTAINED"))
+  ((:contained "USET_SPAN_CONTAINED"))
+  ((:simple "USET_SPAN_SIMPLE")))
+
+(cenum (u-relative-date-time-unit)
+  ((:year "UDAT_REL_UNIT_YEAR"))
+  ((:quarter "UDAT_REL_UNIT_QUARTER"))
+  ((:month "UDAT_REL_UNIT_MONTH"))
+  ((:week "UDAT_REL_UNIT_WEEK"))
+  ((:day "UDAT_REL_UNIT_DAY"))
+  ((:hour "UDAT_REL_UNIT_HOUR"))
+  ((:minute "UDAT_REL_UNIT_MINUTE"))
+  ((:second "UDAT_REL_UNIT_SECOND"))
+  ((:sunday "UDAT_REL_UNIT_SUNDAY"))
+  ((:monday "UDAT_REL_UNIT_MONDAY"))
+  ((:tuesday "UDAT_REL_UNIT_TUESDAY"))
+  ((:wednesday "UDAT_REL_UNIT_WEDNESDAY"))
+  ((:thursday "UDAT_REL_UNIT_THURSDAY"))
+  ((:friday "UDAT_REL_UNIT_FRIDAY"))
+  ((:saturday "UDAT_REL_UNIT_SATURDAY")))
+
+(cenum (u-date-relative-date-time-formatter-style)
+  ((:long "UDAT_STYLE_LONG"))
+  ((:short "UDAT_STYLE_SHORT"))
+  ((:narrow "UDAT_STYLE_NARROW")))
+
+(constant (u-no-numeric-value "U_NO_NUMERIC_VALUE") :type double-float)
+;;; UDISPCTX_* are enum values (not #defines) — hardcode in ffi-extra.lisp.

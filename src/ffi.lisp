@@ -65,9 +65,9 @@
 
 (defvar *icu-loaded* nil)
 
-;;; Defined for real in ffi-mf2.lisp (loaded later in the serial system).
-(defun %load-mf2 ()
-  (error "cl-stack-icu: %load-mf2 called before ffi-mf2.lisp loaded"))
+;;; %LOAD-MF2 is defined in ffi-mf2.lisp (serial later). Do not put an erroring
+;;; stub here: ECL can compile LOAD-ICU's direct call into a fixed reference to
+;;; that stub, so a later DEFUN in ffi-mf2 never takes effect.
 
 (defun %host-os ()
   #+windows "windows"
@@ -148,8 +148,11 @@
         (load-foreign-library 'libicudata)
         (load-foreign-library 'libicuuc)
         (load-foreign-library 'libicui18n)))
-    (%load-mf2)
     (setf *icu-loaded* t))
+  ;; Late-bind MF2: never (%load-mf2) — ECL may inline the pre-mf2 binding.
+  (let ((sym (find-symbol "%LOAD-MF2" #.*package*)))
+    (when (and sym (fboundp sym))
+      (funcall (symbol-function sym))))
   t)
 
 ;;; --- version / errors ---------------------------------------------------------

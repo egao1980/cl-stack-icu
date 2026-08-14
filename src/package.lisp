@@ -88,6 +88,12 @@
            #:uidna-close
            #:uidna-name-to-ascii
            #:uidna-name-to-unicode
+           #:uidna-label-to-ascii
+           #:uidna-label-to-unicode
+           #:uscript-get-script-extensions
+           #:udatpg-open
+           #:udatpg-close
+           #:udatpg-get-best-pattern
            ;; locale / resources / case
            #:uloc-get-default
            #:uloc-set-default

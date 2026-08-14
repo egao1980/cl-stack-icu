@@ -216,3 +216,28 @@
 
 ;;; UDISPCTX_CAPITALIZATION_NONE = (UDISPCTX_TYPE_CAPITALIZATION<<8)+0
 (defconstant +udispctx-capitalization-none+ #x100)
+
+;;; --- Script_Extensions (uscript) ----------------------------------------------
+
+(defcfun-icu ("uscript_getScriptExtensions" uscript-get-script-extensions) :int32
+  (c u-char32)
+  (scripts :pointer)
+  (capacity :int32)
+  (p-error-code :pointer))
+
+;;; --- DateTimePatternGenerator (udatpg) ----------------------------------------
+
+(defcfun-icu ("udatpg_open" udatpg-open) :pointer
+  (locale :string)
+  (p-error-code :pointer))
+
+(defcfun-icu ("udatpg_close" udatpg-close) :void
+  (dtpg :pointer))
+
+(defcfun-icu ("udatpg_getBestPattern" udatpg-get-best-pattern) :int32
+  (dtpg :pointer)
+  (skeleton :pointer)
+  (length :int32)
+  (best-pattern :pointer)
+  (capacity :int32)
+  (p-error-code :pointer))

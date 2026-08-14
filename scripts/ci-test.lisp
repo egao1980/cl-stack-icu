@@ -22,20 +22,6 @@
 
 (cl-repo:add-registry "https://ghcr.io" :namespace "egao1980/cl-systems" :priority :prepend)
 
-(when (uiop:getenv "CI_INSTALL_DEPS_ONLY")
-  (call-with-ci-muffles
-   (lambda ()
-     (cl-repo:ensure-system-dependencies "cl-stack-icu"
-       :also-tests t
-       :sources '(("cffi" :ql)
-                  ("cffi-grovel" :ql)
-                  ("babel" :ql)
-                  ("trivial-features" :ql)
-                  ("cl-unicode" :ql)
-                  ("rove" :ql)))))
-  (format t "~&; ci: deps-only done~%")
-  (uiop:quit 0))
-
 (call-with-ci-muffles
  (lambda ()
    (unless (asdf:find-system "cffi-grovel" nil)

@@ -328,6 +328,24 @@ UCHAR-COUNT directly to FOREIGN-STRING-TO-LISP."
   (p-info :pointer)
   (p-error-code :pointer))
 
+(defcfun-icu ("uidna_labelToASCII" uidna-label-to-ascii) :int32
+  (idna :pointer)
+  (label :pointer)
+  (length :int32)
+  (dest :pointer)
+  (capacity :int32)
+  (p-info :pointer)
+  (p-error-code :pointer))
+
+(defcfun-icu ("uidna_labelToUnicode" uidna-label-to-unicode) :int32
+  (idna :pointer)
+  (label :pointer)
+  (length :int32)
+  (dest :pointer)
+  (capacity :int32)
+  (p-info :pointer)
+  (p-error-code :pointer))
+
 ;;; Auto-load on ASDF load — consumers must not call LOAD-ICU (policy: no extra load-*).
 ;;; Note: LOAD-ICU is defined above; %LOAD-MF2 lives in ffi-mf2.lisp which loads after.
 ;;; The actual auto-load call is at the end of ffi-mf2.lisp.

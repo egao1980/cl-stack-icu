@@ -60,7 +60,15 @@ msys_path() {
 }
 LISP_ROOT="$(lisp_path "$ROOT")"
 
-export CL_SOURCE_REGISTRY="$(msys_path "$ROOT")//:$(msys_path "$ROOT")/.cl-repository//:${CL_SOURCE_REGISTRY:-}"
+# ASDF splits CL_SOURCE_REGISTRY on ';' on Windows (':' would split D:).
+# Prefer setup-client's GITHUB_ENV registry when present.
+if command -v cygpath >/dev/null 2>&1; then
+  if [[ -z "${CL_SOURCE_REGISTRY:-}" ]]; then
+    export CL_SOURCE_REGISTRY="$(lisp_path "$ROOT")//;$(lisp_path "$ROOT")/.cl-repository//;"
+  fi
+else
+  export CL_SOURCE_REGISTRY="$(msys_path "$ROOT")//:$(msys_path "$ROOT")/.cl-repository//:${CL_SOURCE_REGISTRY:-}"
+fi
 
 STAGE_LISP="$(mktemp "${TMPDIR:-/tmp}/stage-grovel.XXXXXX")"
 cleanup_stage_lisp() { rm -f "$STAGE_LISP"; }

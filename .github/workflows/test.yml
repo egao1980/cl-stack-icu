@@ -100,7 +100,6 @@ jobs:
         shell: bash
         run: |
           chmod +x scripts/stage-grovel.sh
-          export CL_SOURCE_REGISTRY="$(pwd)//:$(pwd)/${CL_REPOSITORY_CLIENT_DIR}//:$HOME/.local/share/cl-repository/systems//:"
           ./scripts/stage-grovel.sh cl-stack-icu
           # Consumer-style cache path so asd prefers grovel-cache over live grovel.
           mkdir -p grovel-cache

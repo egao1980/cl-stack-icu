@@ -94,6 +94,7 @@ jobs:
       - uses: egao1980/cl-repository/.github/actions/ci@main
         with:
           phase: install
+          system: cl-stack-icu
 
       - name: Stage grovel
         shell: bash
@@ -109,6 +110,7 @@ jobs:
       - uses: egao1980/cl-repository/.github/actions/ci@main
         with:
           phase: test
+          system: cl-stack-icu
         env:
           CL_STACK_ICU_NATIVE: ${{ env.CL_STACK_ICU_NATIVE }}
           CL_STACK_ICU_INCLUDE: ${{ env.CL_STACK_ICU_INCLUDE }}

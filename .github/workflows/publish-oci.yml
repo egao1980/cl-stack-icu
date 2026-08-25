@@ -78,6 +78,7 @@ jobs:
       - uses: egao1980/cl-repository/.github/actions/ci@main
         with:
           phase: install
+          system: cl-stack-icu
       - name: ASDF registry for grovel
         shell: bash
         run: |

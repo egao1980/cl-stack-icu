@@ -79,7 +79,8 @@
                         ("lib/windows-amd64/cl_stack_icu_mf2.dll" . "cl_stack_icu_mf2.dll")))
                (:role "cffi-grovel-output"
                 :files (("grovel/windows-amd64/grovel.cffi.lisp"
-                         . "grovel.cffi.lisp")))))))))
+                         . "grovel.cffi.lisp"))))))
+    :ci (:sources (("cffi" :ql) ("cffi-grovel" :ql) ("babel" :ql) ("trivial-features" :ql) ("cl-unicode" :ql) ("rove" :ql))))))
 
 (defsystem "cl-stack-icu/tests"
   :depends-on ("cl-stack-icu" "rove")

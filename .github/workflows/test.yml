@@ -91,25 +91,25 @@ jobs:
           sbcl-version: ${{ env.SBCL_VERSION }}
           roswell-version: ${{ env.ROSWELL_VERSION }}
 
-      - name: Install Lisp deps
-        shell: bash
-        run: |
-          ros -l scripts/ci-install.lisp -q
+      - uses: egao1980/cl-repository/.github/actions/ci@main
+        with:
+          phase: install
+          system: cl-stack-icu
 
       - name: Stage grovel
         shell: bash
         run: |
           chmod +x scripts/stage-grovel.sh
-          export CL_SOURCE_REGISTRY="$(pwd)//:$(pwd)/${CL_REPOSITORY_CLIENT_DIR}//:$HOME/.local/share/cl-repository/systems//:"
           ./scripts/stage-grovel.sh cl-stack-icu
           # Consumer-style cache path so asd prefers grovel-cache over live grovel.
           mkdir -p grovel-cache
           cp -f "grovel/${{ matrix.platform_os }}-${{ matrix.platform_arch }}/grovel.cffi.lisp" \
             grovel-cache/grovel.cffi.lisp
 
-      - name: Test cl-stack-icu
-        shell: bash
-        run: |
-          export CL_SOURCE_REGISTRY="$(pwd)//:$(pwd)/${CL_REPOSITORY_CLIENT_DIR}//:$HOME/.local/share/cl-repository/systems//:"
-          export CL_STACK_ICU_NATIVE="${CL_STACK_ICU_NATIVE:-$(pwd)/lib/${{ matrix.platform_os }}-${{ matrix.platform_arch }}}"
-          ros -l scripts/ci-test.lisp -q
+      - uses: egao1980/cl-repository/.github/actions/ci@main
+        with:
+          phase: test
+          system: cl-stack-icu
+        env:
+          CL_STACK_ICU_NATIVE: ${{ env.CL_STACK_ICU_NATIVE }}
+          CL_STACK_ICU_INCLUDE: ${{ env.CL_STACK_ICU_INCLUDE }}

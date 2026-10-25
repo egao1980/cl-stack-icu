@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Build shared ICU4C (data + uc + i18n) into lib/<os>-<arch>/.
-# Env: ICU_VERSION (default 78.1), DEST_DIR, CL_STACK_ICU_INCLUDE (set for grovel)
+# Env: ICU_VERSION (default 79.1), DEST_DIR, CL_STACK_ICU_INCLUDE (set for grovel)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-ICU_VERSION="${ICU_VERSION:-78.1}"
+ICU_VERSION="${ICU_VERSION:-79.1}"
 JOBS="$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)"
 MAJOR="${ICU_VERSION%%.*}"
 

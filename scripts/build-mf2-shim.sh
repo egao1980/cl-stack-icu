@@ -5,7 +5,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-MAJOR="${ICU_MAJOR:-78}"
+MAJOR="${ICU_MAJOR:-79}"
 
 if [[ -z "${CL_STACK_ICU_INCLUDE:-}" && -f "$ROOT/build/cl-stack-icu-include" ]]; then
   export CL_STACK_ICU_INCLUDE="$(cat "$ROOT/build/cl-stack-icu-include")"

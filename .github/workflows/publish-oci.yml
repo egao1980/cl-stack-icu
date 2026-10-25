@@ -15,7 +15,7 @@ on:
         default: "ghcr.io"
 
 env:
-  ICU_VERSION_DEFAULT: "78.1"
+  ICU_VERSION_DEFAULT: "79.1"
   SBCL_VERSION: 2.6.7
   ROSWELL_VERSION: "26.02.116"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -51,7 +51,7 @@ jobs:
         shell: bash
         run: |
           # ICU upstream release (download tarball) ≠ package semver (tag / OCI).
-          # Tag v78.1.1 → package 78.1.1, still build ICU 78.1 sources.
+          # Tag v79.1.1 → package 79.1.1, still build ICU 79.1 sources.
           ICU="${ICU_VERSION_DEFAULT}"
           echo "version=$ICU" >> "$GITHUB_OUTPUT"
           echo "ICU_VERSION=$ICU" >> "$GITHUB_ENV"

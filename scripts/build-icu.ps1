@@ -1,8 +1,8 @@
 # Build shared ICU4C into lib/windows-amd64/ with MSVC (allinone.sln).
-# Env: ICU_VERSION (default 78.1)
+# Env: ICU_VERSION (default 79.1)
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
-$Version = if ($env:ICU_VERSION) { $env:ICU_VERSION } else { "78.1" }
+$Version = if ($env:ICU_VERSION) { $env:ICU_VERSION } else { "79.1" }
 $Major = $Version.Split('.')[0]
 $Out = Join-Path $Root "lib\windows-amd64"
 $Build = Join-Path $Root "build\icu-$Version-windows-amd64"

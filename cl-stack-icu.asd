@@ -6,7 +6,7 @@
     nil)
 
 (defsystem "cl-stack-icu"
-  :version "78.1.3"
+  :version "79.1.0"
   :description "ICU4C native overlays + CFFI (+ MF2 C++ shim) for cl-stack unicode/i18n/l10n"
   :author "egao1980"
   :license "MIT"
@@ -40,42 +40,42 @@
     :overlays
     ((:platform (:os "linux" :arch "amd64")
       :layers ((:role "native-library"
-                :files (("lib/linux-amd64/libicudata.so.78" . "libicudata.so.78")
+                :files (("lib/linux-amd64/libicudata.so.79" . "libicudata.so.79")
                         ("lib/linux-amd64/libicudata.so" . "libicudata.so")
-                        ("lib/linux-amd64/libicuuc.so.78" . "libicuuc.so.78")
+                        ("lib/linux-amd64/libicuuc.so.79" . "libicuuc.so.79")
                         ("lib/linux-amd64/libicuuc.so" . "libicuuc.so")
-                        ("lib/linux-amd64/libicui18n.so.78" . "libicui18n.so.78")
+                        ("lib/linux-amd64/libicui18n.so.79" . "libicui18n.so.79")
                         ("lib/linux-amd64/libicui18n.so" . "libicui18n.so")
                         ("lib/linux-amd64/libcl_stack_icu_mf2.so" . "libcl_stack_icu_mf2.so")))
                (:role "cffi-grovel-output"
                 :files (("grovel/linux-amd64/grovel.cffi.lisp" . "grovel.cffi.lisp")))))
      (:platform (:os "linux" :arch "arm64")
       :layers ((:role "native-library"
-                :files (("lib/linux-arm64/libicudata.so.78" . "libicudata.so.78")
+                :files (("lib/linux-arm64/libicudata.so.79" . "libicudata.so.79")
                         ("lib/linux-arm64/libicudata.so" . "libicudata.so")
-                        ("lib/linux-arm64/libicuuc.so.78" . "libicuuc.so.78")
+                        ("lib/linux-arm64/libicuuc.so.79" . "libicuuc.so.79")
                         ("lib/linux-arm64/libicuuc.so" . "libicuuc.so")
-                        ("lib/linux-arm64/libicui18n.so.78" . "libicui18n.so.78")
+                        ("lib/linux-arm64/libicui18n.so.79" . "libicui18n.so.79")
                         ("lib/linux-arm64/libicui18n.so" . "libicui18n.so")
                         ("lib/linux-arm64/libcl_stack_icu_mf2.so" . "libcl_stack_icu_mf2.so")))
                (:role "cffi-grovel-output"
                 :files (("grovel/linux-arm64/grovel.cffi.lisp" . "grovel.cffi.lisp")))))
      (:platform (:os "darwin" :arch "arm64")
       :layers ((:role "native-library"
-                :files (("lib/darwin-arm64/libicudata.78.dylib" . "libicudata.78.dylib")
+                :files (("lib/darwin-arm64/libicudata.79.dylib" . "libicudata.79.dylib")
                         ("lib/darwin-arm64/libicudata.dylib" . "libicudata.dylib")
-                        ("lib/darwin-arm64/libicuuc.78.dylib" . "libicuuc.78.dylib")
+                        ("lib/darwin-arm64/libicuuc.79.dylib" . "libicuuc.79.dylib")
                         ("lib/darwin-arm64/libicuuc.dylib" . "libicuuc.dylib")
-                        ("lib/darwin-arm64/libicui18n.78.dylib" . "libicui18n.78.dylib")
+                        ("lib/darwin-arm64/libicui18n.79.dylib" . "libicui18n.79.dylib")
                         ("lib/darwin-arm64/libicui18n.dylib" . "libicui18n.dylib")
                         ("lib/darwin-arm64/libcl_stack_icu_mf2.dylib" . "libcl_stack_icu_mf2.dylib")))
                (:role "cffi-grovel-output"
                 :files (("grovel/darwin-arm64/grovel.cffi.lisp" . "grovel.cffi.lisp")))))
      (:platform (:os "windows" :arch "amd64")
       :layers ((:role "native-library"
-                :files (("lib/windows-amd64/icudt78.dll" . "icudt78.dll")
-                        ("lib/windows-amd64/icuuc78.dll" . "icuuc78.dll")
-                        ("lib/windows-amd64/icuin78.dll" . "icuin78.dll")
+                :files (("lib/windows-amd64/icudt79.dll" . "icudt79.dll")
+                        ("lib/windows-amd64/icuuc79.dll" . "icuuc79.dll")
+                        ("lib/windows-amd64/icuin79.dll" . "icuin79.dll")
                         ("lib/windows-amd64/cl_stack_icu_mf2.dll" . "cl_stack_icu_mf2.dll")))
                (:role "cffi-grovel-output"
                 :files (("grovel/windows-amd64/grovel.cffi.lisp"

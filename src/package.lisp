@@ -193,8 +193,8 @@
            #:u-res-type))
 (in-package #:cl-stack-icu)
 
-;;; Must match ICU major in package :version / sonames (icudt78.dll, libicuuc.so.78, …).
-(defconstant +icu-soname-major+ 78)
+;;; Must match ICU major in package :version / sonames (icudt79.dll, libicuuc.so.79, …).
+(defconstant +icu-soname-major+ 79)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (when (uiop:getenv "HOMEBREW_PREFIX")

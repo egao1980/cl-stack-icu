@@ -14,6 +14,7 @@
          (hb (uiop:getenv "HOMEBREW_PREFIX"))
          (hb-flags (when (and hb (plusp (length hb)))
                      (list (format nil "-I~A/opt/icu4c/include/" hb)
+                           (format nil "-I~A/opt/icu4c@79/include/" hb)
                            (format nil "-I~A/opt/icu4c@78/include/" hb)
                            (format nil "-I~A/include/" hb)))))
     `(cc-flags ,@extra

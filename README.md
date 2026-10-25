@@ -11,13 +11,13 @@ ICU4C **native overlays** + **CFFI** (+ **MF2 C++ shim**) for cl-stack unicode /
 | Not shipped | `libicuio` |
 | Platforms | `linux/amd64`, `linux/arm64`, `darwin/arm64`, `windows/amd64` |
 
-Package version tracks upstream ICU (`78.1` → tag `v78.1`).
+Package version tracks upstream ICU (`79.1` → `79.1.0`, tag `v79.1.0`). The third component is wrapper-only.
 
 ## Consumers
 
 ```lisp
 (asdf:load-system "cl-stack-icu")
-(cl-stack-icu:icu-version-string) ; => "78.1" — natives already loaded
+(cl-stack-icu:icu-version-string) ; => "79.1" — natives already loaded
 (cl-stack-icu:mf2-format-message "Hello {$name}!" '(("name" . "Ada")))
 ```
 
@@ -36,7 +36,7 @@ Env:
 |----------|---------|
 | `CL_STACK_ICU_INCLUDE` | Header root for grovel / shim (`…/include`) |
 | `CL_STACK_ICU_NATIVE` | Extra dir for `cffi:*foreign-library-directories*` |
-| `ICU_VERSION` | Upstream pin (default `78.1`) |
+| `ICU_VERSION` | Upstream pin (default `79.1`) |
 
 ## License
 

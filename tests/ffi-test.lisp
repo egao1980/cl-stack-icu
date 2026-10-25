@@ -4,7 +4,7 @@
   (ok *icu-loaded*)
   (let ((v (icu-version-string)))
     (ok (stringp v))
-    (ok (search "78." v) (format nil "expected ICU 78.x, got ~S" v))))
+    (ok (search "79." v) (format nil "expected ICU 79.x, got ~S" v))))
 
 (deftest grovel-major-matches-soname
   (ok (= u-icu-version-major-num +icu-soname-major+)))

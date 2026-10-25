@@ -2,7 +2,7 @@
 # Requires ICU MSVC build (CL_STACK_ICU_INCLUDE + bin64/lib64).
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
-$Major = if ($env:ICU_MAJOR) { $env:ICU_MAJOR } else { "78" }
+$Major = if ($env:ICU_MAJOR) { $env:ICU_MAJOR } else { "79" }
 $Out = if ($env:DEST_DIR) { $env:DEST_DIR } else { Join-Path $Root "lib\windows-amd64" }
 $Include = $env:CL_STACK_ICU_INCLUDE
 if (-not $Include -and (Test-Path (Join-Path $Root "build\cl-stack-icu-include"))) {
@@ -17,7 +17,7 @@ if (-not (Test-Path $Src)) { throw "mf2 source missing: $Src" }
 # Locate ICU link libs / DLLs from prior build-icu.ps1 layout.
 # MSVC allinone stages DLLs at build/.../bin64 and import libs at build/.../lib64
 # (not under source/). Prefer DEST_DIR for already-staged DLLs.
-$IcuVersion = if ($env:ICU_VERSION) { $env:ICU_VERSION } else { "78.1" }
+$IcuVersion = if ($env:ICU_VERSION) { $env:ICU_VERSION } else { "79.1" }
 $Build = Join-Path $Root "build\icu-$IcuVersion-windows-amd64"
 $SrcRoot = Join-Path $Build "source"
 if (-not (Test-Path $SrcRoot)) { $SrcRoot = Join-Path $Build "icu\source" }
@@ -46,7 +46,7 @@ if (-not $Bin64) { throw "bin64 not found under $Build (or $Out) — run build-i
 if (-not $Lib64) { throw "lib64 not found under $Build — run build-icu.ps1 first" }
 Write-Host "MF2 link: Bin64=$Bin64 Lib64=$Lib64 Out=$Out"
 
-# MSVC ICU import libs are unversioned (icuuc.lib); DLLs are versioned (icuuc78.dll).
+# MSVC ICU import libs are unversioned (icuuc.lib); DLLs are versioned (icuuc79.dll).
 $ImportCandidates = @(
   @("icuin.lib", "icuuc.lib", "icudt.lib"),
   @("icuin$Major.lib", "icuuc$Major.lib", "icudt$Major.lib")

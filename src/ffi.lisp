@@ -1,6 +1,6 @@
 (in-package #:cl-stack-icu)
 
-;;; ICU ships versioned C entry points by default (u_strlen_78). Bind via major.
+;;; ICU ships versioned C entry points by default (u_strlen_79). Bind via major.
 
 (defmacro defcfun-icu ((c-name lisp-name) return-type &body args)
   `(defcfun (,(format nil "~A_~D" c-name +icu-soname-major+) ,lisp-name)
@@ -168,7 +168,7 @@
   (code :int))
 
 (defun icu-version-string ()
-  "Return ICU version string (e.g. \"78.1\")."
+  "Return ICU version string (e.g. \"79.1\")."
   (with-foreign-objects ((ver :uint8 u-max-version-length)
                          (buf :char u-max-version-string-length))
     (u-get-version ver)

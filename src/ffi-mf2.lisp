@@ -2,41 +2,6 @@
 
 ;;; MessageFormat 2 via native/mf2 C++ shim (not MF1/umsg).
 
-(define-foreign-library libcl-stack-icu-mf2
-  (:darwin (:or "libcl_stack_icu_mf2.dylib"
-                "/opt/homebrew/lib/libcl_stack_icu_mf2.dylib"))
-  (:unix (:or "libcl_stack_icu_mf2.so"))
-  (:windows (:or "cl_stack_icu_mf2.dll"))
-  (t (:default "libcl_stack_icu_mf2")))
-
-(defun %mf2-lib-candidates ()
-  #+windows '("cl_stack_icu_mf2.dll")
-  #+darwin '("libcl_stack_icu_mf2.dylib")
-  #+(and unix (not darwin)) '("libcl_stack_icu_mf2.so")
-  #-(or windows darwin unix) '("libcl_stack_icu_mf2.so"))
-
-(defun %find-mf2-lib (dir)
-  (dolist (name (%mf2-lib-candidates))
-    (let ((p (merge-pathnames name (uiop:ensure-directory-pathname dir))))
-      (when (probe-file p)
-        (return (namestring (truename p)))))))
-
-(defun %load-mf2 ()
-  (when (foreign-library-loaded-p 'libcl-stack-icu-mf2)
-    (return-from %load-mf2 t))
-  (let ((preloaded nil))
-    (dolist (dir (%native-search-dirs))
-      (when (and dir (uiop:directory-exists-p dir))
-        (pushnew dir cffi:*foreign-library-directories* :test #'equal)
-        (unless preloaded
-          (let ((p (%find-mf2-lib dir)))
-            (when p
-              (load-foreign-library p)
-              (setf preloaded t))))))
-    (unless preloaded
-      (load-foreign-library 'libcl-stack-icu-mf2)))
-  t)
-
 ;;; Shim symbols are unversioned (our C ABI).
 
 (defcfun ("cl_stack_icu_mf2_open" mf2-open) :pointer
@@ -82,8 +47,6 @@
 (defun mf2-format-message (pattern args &key (locale "en") (max-bytes 4096))
   "Format MF2 PATTERN (UTF-8 string) with ARGS alist ((name . value)…).
 VALUE is string, double-float, or integer. Returns UTF-8 Lisp string."
-  ;; Late-bind: same ECL inlining concern as LOAD-ICU if a stub ever exists again.
-  (funcall (symbol-function '%load-mf2))
   (with-foreign-object (err :int)
     (setf (mem-ref err :int) (foreign-enum-value 'u-error-code :zero-error))
     (with-foreign-string (pat pattern)
@@ -127,6 +90,6 @@ VALUE is string, double-float, or integer. Returns UTF-8 Lisp string."
                  (mf2-args-close a)))
           (mf2-close fmt))))))
 
-;;; Auto-load on ASDF load — consumers must not call LOAD-ICU (policy: no extra load-*).
+;;; The libraries were loaded by the .asd's :native-library components.
 (eval-when (:load-toplevel :execute)
-  (load-icu))
+  (setf *icu-loaded* t))

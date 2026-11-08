@@ -6,11 +6,11 @@
     nil)
 
 (defsystem "cl-stack-icu"
-  :version "79.1.0"
+  :version "79.1.1"
   :description "ICU4C native overlays + CFFI (+ MF2 C++ shim) for cl-stack unicode/i18n/l10n"
   :author "egao1980"
   :license "MIT"
-  :defsystem-depends-on ("cffi-grovel")
+  :defsystem-depends-on ("cffi-grovel" (:version "asdf-native" "0.3.0"))
   :depends-on ("cffi")
   :serial t
   :pathname "src"
@@ -22,12 +22,40 @@
       (if cache
           '((:file "package")
             (:file "grovel-cached" :pathname "../grovel-cache/grovel.cffi")
+            ;; data → uc → i18n → MF2 shim, by absolute path from $CL_STACK_ICU_NATIVE,
+            ;; native/ (overlay) or lib/<os>-<arch>/ (checkout), then keg-only Homebrew
+            ;; icu4c; else the system ICU.
+            (:native-library "icudata" :versions ("79") :names (:windows ("icudt79.dll" "icudt.dll"))
+             :env "CL_STACK_ICU_NATIVE" :system t
+             :fallback-directories ("/opt/homebrew/opt/icu4c/lib/" "/usr/local/opt/icu4c/lib/"))
+            (:native-library "icuuc" :versions ("79") :names (:windows ("icuuc79.dll" "icuuc.dll"))
+             :env "CL_STACK_ICU_NATIVE" :system t
+             :fallback-directories ("/opt/homebrew/opt/icu4c/lib/" "/usr/local/opt/icu4c/lib/"))
+            (:native-library "icui18n" :versions ("79") :names (:windows ("icuin79.dll" "icuin.dll"))
+             :env "CL_STACK_ICU_NATIVE" :system t
+             :fallback-directories ("/opt/homebrew/opt/icu4c/lib/" "/usr/local/opt/icu4c/lib/"))
+            (:native-library "cl_stack_icu_mf2" :env "CL_STACK_ICU_NATIVE" :system t
+             :fallback-directories ("/opt/homebrew/lib/"))
             (:file "ffi")
             (:file "ffi-i18n")
             (:file "ffi-extra")
             (:file "ffi-mf2"))
           '((:file "package")
             (cffi-grovel:grovel-file "grovel")
+            ;; data → uc → i18n → MF2 shim, by absolute path from $CL_STACK_ICU_NATIVE,
+            ;; native/ (overlay) or lib/<os>-<arch>/ (checkout), then keg-only Homebrew
+            ;; icu4c; else the system ICU.
+            (:native-library "icudata" :versions ("79") :names (:windows ("icudt79.dll" "icudt.dll"))
+             :env "CL_STACK_ICU_NATIVE" :system t
+             :fallback-directories ("/opt/homebrew/opt/icu4c/lib/" "/usr/local/opt/icu4c/lib/"))
+            (:native-library "icuuc" :versions ("79") :names (:windows ("icuuc79.dll" "icuuc.dll"))
+             :env "CL_STACK_ICU_NATIVE" :system t
+             :fallback-directories ("/opt/homebrew/opt/icu4c/lib/" "/usr/local/opt/icu4c/lib/"))
+            (:native-library "icui18n" :versions ("79") :names (:windows ("icuin79.dll" "icuin.dll"))
+             :env "CL_STACK_ICU_NATIVE" :system t
+             :fallback-directories ("/opt/homebrew/opt/icu4c/lib/" "/usr/local/opt/icu4c/lib/"))
+            (:native-library "cl_stack_icu_mf2" :env "CL_STACK_ICU_NATIVE" :system t
+             :fallback-directories ("/opt/homebrew/lib/"))
             (:file "ffi")
             (:file "ffi-i18n")
             (:file "ffi-extra")

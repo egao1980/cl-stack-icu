@@ -6,7 +6,7 @@
     nil)
 
 (defsystem "cl-stack-icu"
-  :version "79.1.1"
+  :version "79.1.2"
   :description "ICU4C native overlays + CFFI (+ MF2 C++ shim) for cl-stack unicode/i18n/l10n"
   :author "egao1980"
   :license "MIT"
@@ -61,53 +61,24 @@
             (:file "ffi-extra")
             (:file "ffi-mf2"))))
   :in-order-to ((test-op (test-op "cl-stack-icu/tests")))
+  ;; Native-library overlays: lib/<os>-<arch>/ per platform, derived from the
+  ;; :native-library components. The grovel output folds into the same platform.
   :properties
   (:cl-repo
-   (:cffi-libraries ("libicudata" "libicuuc" "libicui18n" "libcl_stack_icu_mf2")
-    :provides ("cl-stack-icu")
+   (:provides ("cl-stack-icu")
     :overlays
     ((:platform (:os "linux" :arch "amd64")
-      :layers ((:role "native-library"
-                :files (("lib/linux-amd64/libicudata.so.79" . "libicudata.so.79")
-                        ("lib/linux-amd64/libicudata.so" . "libicudata.so")
-                        ("lib/linux-amd64/libicuuc.so.79" . "libicuuc.so.79")
-                        ("lib/linux-amd64/libicuuc.so" . "libicuuc.so")
-                        ("lib/linux-amd64/libicui18n.so.79" . "libicui18n.so.79")
-                        ("lib/linux-amd64/libicui18n.so" . "libicui18n.so")
-                        ("lib/linux-amd64/libcl_stack_icu_mf2.so" . "libcl_stack_icu_mf2.so")))
-               (:role "cffi-grovel-output"
+      :layers ((:role "cffi-grovel-output"
                 :files (("grovel/linux-amd64/grovel.cffi.lisp" . "grovel.cffi.lisp")))))
      (:platform (:os "linux" :arch "arm64")
-      :layers ((:role "native-library"
-                :files (("lib/linux-arm64/libicudata.so.79" . "libicudata.so.79")
-                        ("lib/linux-arm64/libicudata.so" . "libicudata.so")
-                        ("lib/linux-arm64/libicuuc.so.79" . "libicuuc.so.79")
-                        ("lib/linux-arm64/libicuuc.so" . "libicuuc.so")
-                        ("lib/linux-arm64/libicui18n.so.79" . "libicui18n.so.79")
-                        ("lib/linux-arm64/libicui18n.so" . "libicui18n.so")
-                        ("lib/linux-arm64/libcl_stack_icu_mf2.so" . "libcl_stack_icu_mf2.so")))
-               (:role "cffi-grovel-output"
+      :layers ((:role "cffi-grovel-output"
                 :files (("grovel/linux-arm64/grovel.cffi.lisp" . "grovel.cffi.lisp")))))
      (:platform (:os "darwin" :arch "arm64")
-      :layers ((:role "native-library"
-                :files (("lib/darwin-arm64/libicudata.79.dylib" . "libicudata.79.dylib")
-                        ("lib/darwin-arm64/libicudata.dylib" . "libicudata.dylib")
-                        ("lib/darwin-arm64/libicuuc.79.dylib" . "libicuuc.79.dylib")
-                        ("lib/darwin-arm64/libicuuc.dylib" . "libicuuc.dylib")
-                        ("lib/darwin-arm64/libicui18n.79.dylib" . "libicui18n.79.dylib")
-                        ("lib/darwin-arm64/libicui18n.dylib" . "libicui18n.dylib")
-                        ("lib/darwin-arm64/libcl_stack_icu_mf2.dylib" . "libcl_stack_icu_mf2.dylib")))
-               (:role "cffi-grovel-output"
+      :layers ((:role "cffi-grovel-output"
                 :files (("grovel/darwin-arm64/grovel.cffi.lisp" . "grovel.cffi.lisp")))))
      (:platform (:os "windows" :arch "amd64")
-      :layers ((:role "native-library"
-                :files (("lib/windows-amd64/icudt79.dll" . "icudt79.dll")
-                        ("lib/windows-amd64/icuuc79.dll" . "icuuc79.dll")
-                        ("lib/windows-amd64/icuin79.dll" . "icuin79.dll")
-                        ("lib/windows-amd64/cl_stack_icu_mf2.dll" . "cl_stack_icu_mf2.dll")))
-               (:role "cffi-grovel-output"
-                :files (("grovel/windows-amd64/grovel.cffi.lisp"
-                         . "grovel.cffi.lisp")))))))))
+      :layers ((:role "cffi-grovel-output"
+                :files (("grovel/windows-amd64/grovel.cffi.lisp" . "grovel.cffi.lisp")))))))))
 
 (defsystem "cl-stack-icu/tests"
   :depends-on ("cl-stack-icu" "rove")
